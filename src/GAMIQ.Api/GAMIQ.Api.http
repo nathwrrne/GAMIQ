@@ -1,0 +1,87 @@
+@host = http://localhost:5087/api/v1
+
+### Create a user (201 Created)
+POST {{host}}/users
+Content-Type: application/json
+
+{
+  "username": "somchai01",
+  "email": "somchai@example.com",
+  "password": "Passw0rd!"
+}
+
+### Duplicate user (409 Conflict)
+POST {{host}}/users
+Content-Type: application/json
+
+{
+  "username": "somchai01",
+  "email": "somchai@example.com",
+  "password": "Passw0rd!"
+}
+
+### Missing fields (400 Bad Request)
+POST {{host}}/users
+Content-Type: application/json
+
+{
+  "username": "",
+  "email": "",
+  "password": ""
+}
+
+### Fetch a user (200 OK)
+GET {{host}}/users/1
+Accept: application/json
+
+### Unknown user (404 Not Found)
+GET {{host}}/users/999999
+Accept: application/json
+
+### Paginated catalog (200 OK)
+GET {{host}}/products?page=1&pageSize=5
+Accept: application/json
+
+### Create a product with dynamic attributes (201 Created)
+POST {{host}}/products
+Content-Type: application/json
+
+{
+  "name": "Chiang Mai Drift",
+  "description": "Street racing through the old city.",
+  "price": 19.99,
+  "stock": 250,
+  "genres": ["Racing", "Indie"],
+  "platforms": ["Windows", "PlayStation5"],
+  "tags": ["Singleplayer", "Controller Support"],
+  "attributes": {
+    "developer": "CMU Studio",
+    "releaseYear": 2026,
+    "ageRating": "E"
+  }
+}
+
+### Create an order - dual-DB transaction (201 Created)
+# Replace productId with a real ObjectId from GET /products
+POST {{host}}/orders
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "items": [
+    { "productId": "PASTE_OBJECT_ID_HERE", "quantity": 2 }
+  ]
+}
+
+### Empty order (400 Bad Request)
+POST {{host}}/orders
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "items": []
+}
+
+### Fetch an order (200 OK)
+GET {{host}}/orders/1
+Accept: application/json
